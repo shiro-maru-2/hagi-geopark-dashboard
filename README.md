@@ -1,1 +1,0 @@
-# hagi-geopark-dashboard

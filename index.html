@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>萩ジオパーク 業務ポータル</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#eef2f7;color:#2d3748;line-height:1.65}
+header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:#fff;padding:16px 32px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:1.25rem;font-weight:800;letter-spacing:.05em}
+.hdate{font-size:.88rem;opacity:.85}
+.hright{display:flex;align-items:center;gap:16px}
+.update-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;
+  padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;
+  font-family:inherit;letter-spacing:.02em;transition:background .15s}
+.update-btn:hover{background:rgba(255,255,255,0.28)}
+.update-btn:disabled{opacity:.5;cursor:not-allowed}
+.gen-time{font-size:.75rem;opacity:.65}
+/* layout */
+.wrap{max-width:1300px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.span2{grid-column:span 2}
+.span3{grid-column:1/-1}
+.card{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.ctitle{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#718096;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ctitle::before{content:'';width:4px;height:13px;border-radius:2px;background:#3182ce;display:inline-block}
+.empty{color:#a0aec0;font-size:.83rem;text-align:center;padding:14px 0}
+/* stat cards */
+.stats{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.stat-gauge{display:flex;flex-direction:column;align-items:center;gap:4px}
+.stat-gauge .glabel{font-size:.72rem;color:#718096;font-weight:600;text-align:center}
+.stat-row{display:flex;gap:12px;flex:1;flex-wrap:wrap}
+.stat-box{background:#f7fafc;border-radius:10px;padding:12px 16px;flex:1;min-width:100px}
+.stat-box .sv{font-size:1.6rem;font-weight:800;color:#2d3748;line-height:1}
+.stat-box .sl{font-size:.72rem;color:#718096;margin-top:2px}
+.stat-box.accent{background:#ebf8ff}.stat-box.accent .sv{color:#2b6cb0}
+.stat-box.green{background:#f0fff4}.stat-box.green .sv{color:#276749}
+.stat-box.orange{background:#fffaf0}.stat-box.orange .sv{color:#c05621}
+/* type legend */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:.72rem;color:#4a5568}
+.leg-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+/* tasks */
+.task{font-size:.86rem;padding:6px 0;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;color:#4a5568}
+.task:last-child{border-bottom:none}
+.cb{color:#a0aec0;flex-shrink:0}
+/* deadlines */
+.dli{background:#fffaf0;border-left:3px solid #ed8936;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:8px;font-size:.84rem;color:#4a5568}
+.dli:last-child{margin-bottom:0}
+.dlp{display:block;font-size:.7rem;color:#718096;margin-bottom:2px}
+.dl{font-weight:700;color:#c05621;background:#feebcb;padding:1px 5px;border-radius:3px;font-size:.78rem}
+/* projects */
+.pj{border-left:4px solid #3182ce;padding:12px 14px;background:#f7fafc;border-radius:0 10px 10px 0;margin-bottom:12px}
+.pj:last-child{margin-bottom:0}
+.pj-name{font-weight:800;font-size:.97rem;color:#1a365d;margin-bottom:2px}
+.pj-partner{font-size:.76rem;color:#718096;margin-bottom:7px}
+.pj-status{font-size:.81rem;color:#4a5568;margin-bottom:9px;line-height:1.5}
+.action{font-size:.8rem;color:#4a5568;padding:2px 0;display:flex;gap:6px}
+/* calendar groups grid */
+.cal-groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+/* calendar groups */
+.cal-group{margin-bottom:16px}
+.cal-group:last-child{margin-bottom:0}
+.cal-group-header{display:flex;align-items:center;gap:7px;border-left:3px solid #ccc;padding:4px 10px;background:#f7fafc;border-radius:0 6px 6px 0;font-size:.78rem;font-weight:700;color:#2d3748;margin-bottom:6px}
+.cg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cg-count{margin-left:auto;font-size:.72rem;font-weight:400;color:#718096}
+.cal-ev{display:flex;align-items:center;gap:10px;padding:5px 10px;border-bottom:1px solid #e2e8f0;font-size:.84rem}
+.cal-ev:last-child{border-bottom:none}
+.ev-date{font-size:.75rem;color:#718096;min-width:74px;flex-shrink:0}
+.ev-title{flex:1;color:#2d3748}
+/* events from md */
+.ev{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.ev:last-child{border-bottom:none}
+.evcal{text-align:center;background:#ebf8ff;border-radius:10px;padding:7px 12px;min-width:68px}
+.evcal .mo{font-size:.66rem;font-weight:700;color:#2b6cb0}
+.evcal .dy{font-size:1.7rem;font-weight:800;color:#2b6cb0;line-height:1}
+.evinfo .et{font-size:.7rem;color:#718096}
+.evinfo .en{font-weight:700;font-size:.93rem;margin:2px 0}
+.evinfo .ep{font-size:.76rem;color:#718096;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bar{display:inline-block;width:52px;height:5px;background:#e2e8f0;border-radius:3px;position:relative;vertical-align:middle}
+.fill{position:absolute;height:100%;border-radius:3px;background:#48bb78}
+/* timeline */
+.timeline-wrap{overflow-x:auto;padding-bottom:4px}
+/* badges */
+.b{padding:2px 7px;border-radius:10px;font-size:.73rem;font-weight:700}
+.b.today{background:#fff5f5;color:#c53030}
+.b.urgent{background:#fff5f5;color:#c53030}
+.b.soon{background:#fffaf0;color:#c05621}
+.b.future{background:#f0fff4;color:#276749}
+.b.past{background:#f7fafc;color:#a0aec0}
+footer{text-align:center;color:#a0aec0;font-size:.73rem;padding:18px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌍 萩ジオパーク 業務ポータル</h1>
+  <div class="hright">
+    <span class="gen-time">最終更新: 2026-05-01 09:57</span>
+    <button class="update-btn" onclick="doUpdate()" id="updbtn">🔄 更新</button>
+    <div class="hdate">2026年5月1日（金）</div>
+  </div>
+</header>
+<script>
+function doUpdate() {
+  var btn = document.getElementById('updbtn');
+  btn.disabled = true;
+  btn.textContent = '更新中...';
+  window.location.href = '/update';
+}
+// ファイル直接開きの場合はボタンを隠す
+if (window.location.protocol === 'file:') {
+  document.getElementById('updbtn').style.display = 'none';
+}
+</script>
+<div class="wrap">
+
+  <!-- 統計・年間進捗 -->
+  <div class="card span3">
+    <div class="ctitle">今年の活動サマリー</div>
+    
+    <div class="stats">
+      <div class="stat-gauge">
+        <svg width="110" height="110" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#3182ce" stroke-width="10"
+    stroke-dasharray="98.2 251.3" stroke-linecap="round"
+    transform="rotate(-90 50 50)"/>
+  <text x="50" y="46" text-anchor="middle" font-size="18" font-weight="800" fill="#2d3748">43</text>
+  <text x="50" y="62" text-anchor="middle" font-size="10" fill="#718096">/110件</text>
+</svg>
+        <div class="glabel">年間総件数</div>
+      </div>
+      <div class="stat-gauge">
+        <svg width="110" height="110" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#38a169" stroke-width="10"
+    stroke-dasharray="50.3 251.3" stroke-linecap="round"
+    transform="rotate(-90 50 50)"/>
+  <text x="50" y="46" text-anchor="middle" font-size="18" font-weight="800" fill="#2d3748">12</text>
+  <text x="50" y="62" text-anchor="middle" font-size="10" fill="#718096">/60件</text>
+</svg>
+        <div class="glabel">講演・授業</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box accent"><div class="sv">9</div><div class="sl">出前授業</div></div>
+        <div class="stat-box green"><div class="sv">3</div><div class="sl">講演</div></div>
+        <div class="stat-box orange"><div class="sv">4</div><div class="sl">イベント</div></div>
+        <div class="stat-box"><div class="sv">23</div><div class="sl">会議・打合せ</div></div>
+        <div style="flex:1;min-width:160px">
+          <svg width="232" height="78" viewBox="0 0 232 78">
+  <rect x="10" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="28" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="46" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="64" y="0" width="14" height="60" fill="#a0d4f5" rx="2"/><text x="71" y="-2" text-anchor="middle" font-size="8" fill="#4a5568">24</text><rect x="82" y="28" width="14" height="32" fill="#3182ce" rx="2"/><text x="89" y="26" text-anchor="middle" font-size="8" fill="#4a5568">13</text><rect x="100" y="45" width="14" height="15" fill="#a0d4f5" rx="2"/><text x="107" y="43" text-anchor="middle" font-size="8" fill="#4a5568">6</text><rect x="118" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="136" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="154" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="172" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="190" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="208" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><text x="17" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">1</text><text x="35" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">2</text><text x="53" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">3</text><text x="71" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">4</text><text x="89" y="72" text-anchor="middle" font-size="8" fill="#2b6cb0" font-weight="700">5</text><text x="107" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">6</text><text x="125" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">7</text><text x="143" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">8</text><text x="161" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">9</text><text x="179" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">10</text><text x="197" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">11</text><text x="215" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">12</text>
+</svg>
+          <div style="font-size:.68rem;color:#a0aec0;text-align:center;margin-top:2px">月別件数（今年）</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="legend" style="margin-top:12px"><span class="leg-item"><span class="leg-dot" style="background:#38a169"></span>学校対応</span><span class="leg-item"><span class="leg-dot" style="background:#3182ce"></span>依頼・講演</span><span class="leg-item"><span class="leg-dot" style="background:#d69e2e"></span>イベント・出展</span><span class="leg-item"><span class="leg-dot" style="background:#718096"></span>会議・打合せ</span><span class="leg-item"><span class="leg-dot" style="background:#a0aec0"></span>その他</span></div>
+  </div>
+
+  <!-- タイムライン（28日）-->
+  <div class="card span3">
+    <div class="ctitle">直近28日タイムライン（Googleカレンダー）</div>
+    <div class="timeline-wrap"><svg width="840" height="46" viewBox="0 0 840 46" style="overflow:visible">
+  <rect x="0" y="0" width="30" height="46" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/><text x="15" y="13" text-anchor="middle" font-size="9" font-weight="800" fill="#2d3748">1</text><text x="15" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><rect x="30" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="45" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">2</text><text x="45" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="60" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="75" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">3</text><text x="75" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="90" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="105" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">4</text><text x="105" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><circle cx="105" cy="34" r="4" fill="#d69e2e"/><rect x="120" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="135" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">5</text><text x="135" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><rect x="150" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="165" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">6</text><text x="165" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><rect x="180" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="195" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">7</text><text x="195" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text><circle cx="195" cy="34" r="4" fill="#718096"/><circle cx="195" cy="44" r="4" fill="#718096"/><rect x="210" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="225" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">8</text><text x="225" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><circle cx="225" cy="34" r="4" fill="#a0aec0"/><circle cx="225" cy="44" r="4" fill="#718096"/><rect x="240" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="255" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">9</text><text x="255" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="270" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="285" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">10</text><text x="285" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="300" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="315" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">11</text><text x="315" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><rect x="330" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="345" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">12</text><text x="345" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><circle cx="345" cy="34" r="4" fill="#718096"/><circle cx="345" cy="44" r="4" fill="#718096"/><rect x="360" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="375" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">13</text><text x="375" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><circle cx="375" cy="34" r="4" fill="#718096"/><rect x="390" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="405" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">14</text><text x="405" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text><rect x="420" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="435" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">15</text><text x="435" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><rect x="450" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="465" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">16</text><text x="465" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="480" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="495" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">17</text><text x="495" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="510" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="525" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">18</text><text x="525" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><circle cx="525" cy="34" r="4" fill="#38a169"/><rect x="540" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="555" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">19</text><text x="555" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><circle cx="555" cy="34" r="4" fill="#38a169"/><rect x="570" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="585" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">20</text><text x="585" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><circle cx="585" cy="34" r="4" fill="#718096"/><rect x="600" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="615" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">21</text><text x="615" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text><rect x="630" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="645" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">22</text><text x="645" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><rect x="660" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="675" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">23</text><text x="675" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="690" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="705" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">24</text><text x="705" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="720" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="735" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">25</text><text x="735" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><circle cx="735" cy="34" r="4" fill="#38a169"/><rect x="750" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="765" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">26</text><text x="765" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><rect x="780" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="795" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">27</text><text x="795" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><circle cx="795" cy="34" r="4" fill="#38a169"/><rect x="810" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="825" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">28</text><text x="825" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text>
+</svg></div>
+    <div style="font-size:.72rem;color:#a0aec0;margin-top:6px">
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">
+        <span style="width:9px;height:9px;border-radius:50%;background:#38a169;display:inline-block"></span>出前授業
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">
+        <span style="width:9px;height:9px;border-radius:50%;background:#3182ce;display:inline-block"></span>講演
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">
+        <span style="width:9px;height:9px;border-radius:50%;background:#d69e2e;display:inline-block"></span>イベント
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:4px">
+        <span style="width:9px;height:9px;border-radius:50%;background:#718096;display:inline-block"></span>会議
+      </span>
+    </div>
+  </div>
+
+  <!-- 今日のタスク -->
+  <div class="card">
+    <div class="ctitle">今日のタスク</div>
+    <div class="task"><span class="cb">□</span>出展内容・展示物の確認</div><div class="task"><span class="cb">□</span>持ち物リスト作成</div><div class="task"><span class="cb">□</span>当日の段取り整理</div><div class="task"><span class="cb">□</span>上原さんへ連絡（書類進捗確認＋次回ミーティング日程候補）</div><div class="task"><span class="cb">□</span>SNS発信：キックオフ（Facebook・Instagram）</div><div class="task"><span class="cb">□</span>萩ジオパーク通信5月号 原稿たたき台</div>
+  </div>
+
+  <!-- 締切 -->
+  <div class="card">
+    <div class="ctitle">締切・期限</div>
+    <div class="dli"><span class="dlp">萩の藍産業復活プロジェクト（川上藍プロジェクト）</span>上原：規約・計画書・予算書の作成（<span class="dl">5月中</span>）</div>
+  </div>
+
+  <!-- 直近の予定（カレンダー）-->
+  <div class="card span3">
+    <div class="ctitle">直近60日の予定（Googleカレンダー・カテゴリ別）</div>
+    <div class="cal-groups-grid">
+            <div class="cal-group">
+              <div class="cal-group-header" style="border-left-color:#38a169">
+                <span class="cg-dot" style="background:#38a169"></span>学校対応
+                <span class="cg-count">7件</span>
+              </div>
+              <div class="cal-ev">
+                  <span class="ev-date">5/18(月) 10:30</span>
+                  <span class="ev-title">田万川中学校1年生・事前学習</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/19(火) 13:20</span>
+                  <span class="ev-title">伊佐中</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/25(月) 終日</span>
+                  <span class="ev-title">伊佐中1年生（笠山＋須佐）</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/27(水) 終日</span>
+                  <span class="ev-title">田万川中学校１年生（仮）</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">6/3(水) 終日</span>
+                  <span class="ev-title">野田学園・福本さんの補助</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">6/9(火) 10:00</span>
+                  <span class="ev-title">萩光塩高３・地学基礎</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">6/23(火) 10:00</span>
+                  <span class="ev-title">萩光塩高３・地学基礎</span>
+                </div>
+            </div>
+            <div class="cal-group">
+              <div class="cal-group-header" style="border-left-color:#3182ce">
+                <span class="cg-dot" style="background:#3182ce"></span>依頼・講演
+                <span class="cg-count">2件</span>
+              </div>
+              <div class="cal-ev">
+                  <span class="ev-date">6/16(火) 終日</span>
+                  <span class="ev-title">だいだい研修</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">6/20(土) 終日</span>
+                  <span class="ev-title">萩学講座（白井）</span>
+                </div>
+            </div>
+            <div class="cal-group">
+              <div class="cal-group-header" style="border-left-color:#d69e2e">
+                <span class="cg-dot" style="background:#d69e2e"></span>イベント・出展
+                <span class="cg-count">1件</span>
+              </div>
+              <div class="cal-ev">
+                  <span class="ev-date">5/4(月) 終日</span>
+                  <span class="ev-title">森フェス</span>
+                </div>
+            </div>
+            <div class="cal-group">
+              <div class="cal-group-header" style="border-left-color:#718096">
+                <span class="cg-dot" style="background:#718096"></span>会議・打合せ
+                <span class="cg-count">7件</span>
+              </div>
+              <div class="cal-ev">
+                  <span class="ev-date">5/7(木) 12:00</span>
+                  <span class="ev-title">地質学会ジオパーク支援委員会（オンライン）</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/7(木) 15:30</span>
+                  <span class="ev-title">萩農林水産事務所</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/8(金) 13:00</span>
+                  <span class="ev-title">JGN事務局緊急会議（オンライン）</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/12(火) 09:30</span>
+                  <span class="ev-title">こども地球の学校</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/12(火) 09:30</span>
+                  <span class="ev-title">編集会議</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/13(水) 10:00</span>
+                  <span class="ev-title">課内ミーティング</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">5/20(水) 10:00</span>
+                  <span class="ev-title">弥富露頭現地打合せ</span>
+                </div>
+            </div>
+            <div class="cal-group">
+              <div class="cal-group-header" style="border-left-color:#a0aec0">
+                <span class="cg-dot" style="background:#a0aec0"></span>その他
+                <span class="cg-count">2件</span>
+              </div>
+              <div class="cal-ev">
+                  <span class="ev-date">5/8(金) 10:30</span>
+                  <span class="ev-title">風穴現地視察</span>
+                </div><div class="cal-ev">
+                  <span class="ev-date">6/10(水) 09:15</span>
+                  <span class="ev-title">長門峡スケッチ</span>
+                </div>
+            </div></div>
+  </div>
+
+  <!-- プロジェクト -->
+  <div class="card span2">
+    <div class="ctitle">進行中プロジェクト</div>
+    <div class="pj">
+          <div class="pj-name">萩の藍産業復活プロジェクト（川上藍プロジェクト）</div>
+          <div class="pj-partner">👥 任意団体「遠谷terra」（代表：上原真紀子さん）、萩市立川上小学校</div>
+          <div class="pj-status">2026年4月30日：今年度キックオフ会議を実施。川上総合事務所の「地域活動チャレンジ補助金制度」申請を決定（年30万円×3年間）。役員体制確立。白井はジオパークとして協力しつつ別組織として関わる方針を共有済み。</div>
+          <div class="action"><span class="cb">□</span>上原：規約・計画書・予算書の作成（<span class="dl">5月中</span>）</div><div class="action"><span class="cb">□</span>上原：申請書類案のメンバー共有→意見集約→提出</div><div class="action"><span class="cb">□</span>清水：川上・大島地域の藍栽培・歴史的資料の探索（随時）</div><div class="action"><span class="cb">□</span>メンバー全員：藍の定植作業・栽培管理（継続）</div><div class="action"><span class="cb">□</span>白井：収益化への温度感を次回確認</div><div class="action"><span class="cb">□</span>次回ミーティングの日程調整（未確定）</div>
+        </div>
+  </div>
+
+  <!-- イベント・講演（MD管理分）-->
+  <div class="card span3">
+    <div class="ctitle">イベント・講演 準備状況（events/フォルダ）</div>
+    <div class="ev">
+          <div class="evcal"><div class="mo">5月</div><div class="dy">4</div></div>
+          <div class="evinfo">
+            <div class="et">イベント出展</div>
+            <div class="en">第11回 森フェス〜ニューポンのモリモリ引力の法則 出展</div>
+            <div class="ep">準備 0/8
+              <span class="bar"><span class="fill" style="width:0%"></span></span>
+              <span class="b urgent">あと3日</span>
+            </div>
+          </div>
+        </div>
+  </div>
+
+</div>
+<footer>萩ジオパーク 業務ポータル ／ 起動: python scripts/dashboard_server.py → http://localhost:8765</footer>
+</body>
+</html>
