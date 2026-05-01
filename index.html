@@ -89,6 +89,28 @@ header h1{font-size:1.25rem;font-weight:800;letter-spacing:.05em}
 .b.future{background:#f0fff4;color:#276749}
 .b.past{background:#f7fafc;color:#a0aec0}
 footer{text-align:center;color:#a0aec0;font-size:.73rem;padding:18px}
+/* ops status */
+.ops-card{background:linear-gradient(135deg,#fffaf0,#fff5f5);border:1.5px solid #ed8936;border-radius:14px;padding:20px 22px}
+.ops-card.ok{background:linear-gradient(135deg,#f0fff4,#e6fffa);border-color:#48bb78}
+.ops-card .ctitle::before{background:#ed8936}
+.ops-card.ok .ctitle::before{background:#38a169}
+.ops-issue{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:.84rem}
+.ops-issue:last-child{margin-bottom:0}
+.ops-issue.urgent{background:#fff5f5;border-left:3px solid #e53e3e;color:#c53030}
+.ops-issue.warning{background:#fffaf0;border-left:3px solid #ed8936;color:#c05621}
+.ops-issue-mark{font-size:1rem;flex-shrink:0}
+.ops-issue-body{flex:1}
+.ops-issue-msg{font-weight:600}
+.ops-issue-tasks{font-size:.75rem;color:#718096;margin-top:3px}
+.ops-week{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.ops-week-col{}
+.ops-week-title{font-size:.72rem;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.ops-task-row{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid #e2e8f0;font-size:.83rem}
+.ops-task-row:last-child{border-bottom:none}
+.ops-task-date{color:#718096;font-size:.76rem;min-width:54px;flex-shrink:0}
+.ops-task-name{flex:1;color:#2d3748}
+.ops-task-src{font-size:.72rem;color:#a0aec0}
+.ops-ok-msg{font-size:.84rem;color:#38a169;font-weight:600;padding:8px 0}
 /* agent drafts */
 .agent-card{background:linear-gradient(135deg,#f0fff4,#e6fffa);border:1.5px solid #48bb78;border-radius:14px;padding:20px 22px}
 .agent-card .ctitle::before{background:#38a169}
@@ -112,7 +134,7 @@ footer{text-align:center;color:#a0aec0;font-size:.73rem;padding:18px}
 <header>
   <h1>🌍 萩ジオパーク 業務ポータル</h1>
   <div class="hright">
-    <span class="gen-time">最終更新: 2026-05-01 15:14</span>
+    <span class="gen-time">最終更新: 2026-05-01 15:24</span>
     <button class="update-btn" onclick="doUpdate()" id="updbtn">🔄 更新</button>
     <div class="hdate">2026年5月1日（金）</div>
   </div>
@@ -205,6 +227,26 @@ if (window.location.protocol === 'file:') {
       <span>期限が近いタスクを自動検知し、文書の草案を生成しました。drafts/2026-05-01/ に保存済みです。</span>
     </div>
     <div class="no-urgent">✅ 今日は期限が迫っているタスクはありません</div>
+  </div>
+
+  <!-- 業務負荷 -->
+  <div class="card ops-card ok span3">
+    <div class="ctitle">📋 白井さんの業務負荷（白井さんタスク 4件）</div>
+    <div class="ops-ok-msg">✅ 問題なし（過負荷・衝突なし）</div>
+    <div class="ops-week">
+      <div class="ops-week-col">
+        <div class="ops-week-title">今週のタスク</div>
+        <div style="font-size:.8rem;color:#a0aec0;padding:4px 0">タスクなし</div>
+      </div>
+      <div class="ops-week-col">
+        <div class="ops-week-title">来週のタスク</div>
+        <div class="ops-task-row">
+              <span class="ops-task-date">5/7(木)</span>
+              <span class="ops-task-name">確認事項への回答 ＋ 骨格確認（30分）</span>
+              <span class="ops-task-src">[見島小中学校 探究学習支]</span>
+            </div>
+      </div>
+    </div>
   </div>
 
   <!-- 今日のタスク -->
