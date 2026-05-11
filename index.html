@@ -134,7 +134,7 @@ footer{text-align:center;color:#a0aec0;font-size:.73rem;padding:18px}
 <header>
   <h1>🌍 萩ジオパーク 業務ポータル</h1>
   <div class="hright">
-    <span class="gen-time">最終更新: 2026-05-11 00:07</span>
+    <span class="gen-time">最終更新: 2026-05-11 00:14</span>
     <button class="update-btn" onclick="doUpdate()" id="updbtn">🔄 更新</button>
     <div class="hdate">2026年5月11日（月）</div>
   </div>
@@ -220,7 +220,14 @@ if (window.location.protocol === 'file:') {
     </div>
   </div>
 
-  
+  <!-- Claude準備物 -->
+  <div class="card agent-card span3">
+    <div class="ctitle">🤖 Claudeが今朝準備した草案</div>
+    <div class="agent-intro">
+      <span>期限が近いタスクを自動検知し、文書の草案を生成しました。drafts/2026-05-11/ に保存済みです。</span>
+    </div>
+    <div class="no-urgent">✅ 今日は期限が迫っているタスクはありません</div>
+  </div>
 
   <!-- 業務負荷 -->
   <div class="card ops-card span3">
