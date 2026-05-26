@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>萩ジオパーク 業務ポータル</title>
@@ -125,8 +126,76 @@ footer{text-align:center;color:var(--mute);font-size:.74rem;font-weight:500;padd
 .ev-name a{color:inherit;text-decoration:none}
 .ev-name a:hover{color:var(--accent)}
 </style>
+
+<style>
+#pw-gate{
+  position:fixed;inset:0;z-index:9999;
+  background:#2a2622;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;
+}
+#pw-gate h2{color:#f1f2f5;font-size:1.1rem;font-weight:900;letter-spacing:.15em;opacity:.8}
+#pw-gate .pw-box{display:flex;gap:10px}
+#pw-gate input{
+  padding:10px 16px;border-radius:6px;border:1px solid #a59f95;
+  background:#3a3632;color:#f1f2f5;font-size:1rem;font-family:inherit;
+  width:220px;outline:none;
+}
+#pw-gate input:focus{border-color:#c63838}
+#pw-gate button{
+  padding:10px 20px;border-radius:6px;border:none;
+  background:#c63838;color:#f1f2f5;font-size:.95rem;font-weight:700;
+  font-family:inherit;cursor:pointer;letter-spacing:.05em;
+}
+#pw-gate button:hover{background:#8b2329}
+#pw-gate .pw-err{color:#ecc8c8;font-size:.85rem;min-height:1.2em;letter-spacing:.04em}
+</style>
 </head>
 <body>
+
+<div id="pw-gate">
+  <h2>&#9679; 萩ジオパーク 業務ポータル</h2>
+  <div class="pw-box">
+    <input type="password" id="pw-input" placeholder="パスワード" autofocus
+           onkeydown="if(event.key==='Enter')checkPw()">
+    <button onclick="checkPw()">入る</button>
+  </div>
+  <div class="pw-err" id="pw-err"></div>
+</div>
+
+
+<script>
+const PW_HASH = 'fb671e8654b52882e89814b4cb64dcf1bf31eeace35f772f0bb6b37c79a32088';
+const PW_KEY  = 'portal_auth';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPw() {
+  const pw = document.getElementById('pw-input').value;
+  const h  = await sha256(pw);
+  if (h === PW_HASH) {
+    sessionStorage.setItem(PW_KEY, '1');
+    document.getElementById('pw-gate').style.display = 'none';
+  } else {
+    document.getElementById('pw-err').textContent = 'パスワードが違います';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+// セッション内で認証済みならゲートを即非表示
+if (sessionStorage.getItem(PW_KEY) === '1') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const g = document.getElementById('pw-gate');
+    if (g) g.style.display = 'none';
+  });
+}
+</script>
+
+
 <header>
   <h1><span>●</span> 萩ジオパーク 業務ポータル</h1>
   <div class="hright">
@@ -901,5 +970,6 @@ async function doUpdate(){
 
 </div>
 <footer>萩ジオパーク 業務ポータル ／ 2026-05-26 10:18</footer>
+
 </body>
 </html>
