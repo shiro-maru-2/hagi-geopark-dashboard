@@ -4,378 +4,902 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>萩ジオパーク 業務ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
+:root{
+  --accent:#c63838;--accent-deep:#8b2329;--accent-pale:#ecc8c8;
+  --bg:#f1f2f5;--card:#fafbfd;--text:#2a2622;--sub:#6e6963;
+  --mute:#a59f95;--faint:#e8eaee;--border:#d6d8dc;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#eef2f7;color:#2d3748;line-height:1.65}
-header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:#fff;padding:16px 32px;display:flex;justify-content:space-between;align-items:center}
-header h1{font-size:1.25rem;font-weight:800;letter-spacing:.05em}
-.hdate{font-size:.88rem;opacity:.85}
-.hright{display:flex;align-items:center;gap:16px}
-.update-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.4);color:#fff;
-  padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;
-  font-family:inherit;letter-spacing:.02em;transition:background .15s}
-.update-btn:hover{background:rgba(255,255,255,0.28)}
-.update-btn:disabled{opacity:.5;cursor:not-allowed}
-.gen-time{font-size:.75rem;opacity:.65}
-/* layout */
-.wrap{max-width:1300px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic','Meiryo',sans-serif;font-weight:500;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px;letter-spacing:.02em}
+.tree-wrap{padding:4px 0}
+.tree-pj{cursor:pointer}
+.tree-pj:hover text{fill:var(--accent);text-decoration:underline}
+.pj{scroll-margin-top:20px}
+
+/* header */
+header{background:var(--text);color:var(--bg);padding:22px 34px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:3px solid var(--accent)}
+header h1{font-size:1.45rem;font-weight:900;letter-spacing:.12em}
+header h1 span{color:var(--accent)}
+.hright{display:flex;align-items:center;gap:18px}
+.gen-time{font-size:.74rem;opacity:.5;font-weight:500}
+.hdate{font-size:.92rem;font-weight:700;opacity:.85;letter-spacing:.05em}
+
+.wrap{max-width:1400px;margin:0 auto;padding:28px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px}
 .span2{grid-column:span 2}
 .span3{grid-column:1/-1}
-.card{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
-.ctitle{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#718096;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.ctitle::before{content:'';width:4px;height:13px;border-radius:2px;background:#3182ce;display:inline-block}
-.empty{color:#a0aec0;font-size:.83rem;text-align:center;padding:14px 0}
-/* stat cards */
-.stats{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-.stat-gauge{display:flex;flex-direction:column;align-items:center;gap:4px}
-.stat-gauge .glabel{font-size:.72rem;color:#718096;font-weight:600;text-align:center}
-.stat-row{display:flex;gap:12px;flex:1;flex-wrap:wrap}
-.stat-box{background:#f7fafc;border-radius:10px;padding:12px 16px;flex:1;min-width:100px}
-.stat-box .sv{font-size:1.6rem;font-weight:800;color:#2d3748;line-height:1}
-.stat-box .sl{font-size:.72rem;color:#718096;margin-top:2px}
-.stat-box.accent{background:#ebf8ff}.stat-box.accent .sv{color:#2b6cb0}
-.stat-box.green{background:#f0fff4}.stat-box.green .sv{color:#276749}
-.stat-box.orange{background:#fffaf0}.stat-box.orange .sv{color:#c05621}
-/* type legend */
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.leg-item{display:flex;align-items:center;gap:4px;font-size:.72rem;color:#4a5568}
-.leg-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
-/* tasks */
-.task{font-size:.86rem;padding:6px 0;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;color:#4a5568}
-.task:last-child{border-bottom:none}
-.cb{color:#a0aec0;flex-shrink:0}
-/* deadlines */
-.dli{background:#fffaf0;border-left:3px solid #ed8936;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:8px;font-size:.84rem;color:#4a5568}
-.dli:last-child{margin-bottom:0}
-.dlp{display:block;font-size:.7rem;color:#718096;margin-bottom:2px}
-.dl{font-weight:700;color:#c05621;background:#feebcb;padding:1px 5px;border-radius:3px;font-size:.78rem}
-/* projects */
-.pj{border-left:4px solid #3182ce;padding:12px 14px;background:#f7fafc;border-radius:0 10px 10px 0;margin-bottom:12px}
-.pj:last-child{margin-bottom:0}
-.pj-name{font-weight:800;font-size:.97rem;color:#1a365d;margin-bottom:2px}
-.pj-partner{font-size:.76rem;color:#718096;margin-bottom:7px}
-.pj-status{font-size:.81rem;color:#4a5568;margin-bottom:9px;line-height:1.5}
-.action{font-size:.8rem;color:#4a5568;padding:2px 0;display:flex;gap:6px}
-/* calendar groups grid */
-.cal-groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-/* calendar groups */
-.cal-group{margin-bottom:16px}
-.cal-group:last-child{margin-bottom:0}
-.cal-group-header{display:flex;align-items:center;gap:7px;border-left:3px solid #ccc;padding:4px 10px;background:#f7fafc;border-radius:0 6px 6px 0;font-size:.78rem;font-weight:700;color:#2d3748;margin-bottom:6px}
-.cg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.cg-count{margin-left:auto;font-size:.72rem;font-weight:400;color:#718096}
-.cal-ev{display:flex;align-items:center;gap:10px;padding:5px 10px;border-bottom:1px solid #e2e8f0;font-size:.84rem}
-.cal-ev:last-child{border-bottom:none}
-.ev-date{font-size:.75rem;color:#718096;min-width:74px;flex-shrink:0}
-.ev-title{flex:1;color:#2d3748}
-/* events from md */
-.ev{display:flex;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #e2e8f0}
-.ev:last-child{border-bottom:none}
-.evcal{text-align:center;background:#ebf8ff;border-radius:10px;padding:7px 12px;min-width:68px}
-.evcal .mo{font-size:.66rem;font-weight:700;color:#2b6cb0}
-.evcal .dy{font-size:1.7rem;font-weight:800;color:#2b6cb0;line-height:1}
-.evinfo .et{font-size:.7rem;color:#718096}
-.evinfo .en{font-weight:700;font-size:.93rem;margin:2px 0}
-.evinfo .ep{font-size:.76rem;color:#718096;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.bar{display:inline-block;width:52px;height:5px;background:#e2e8f0;border-radius:3px;position:relative;vertical-align:middle}
-.fill{position:absolute;height:100%;border-radius:3px;background:#48bb78}
-/* timeline */
-.timeline-wrap{overflow-x:auto;padding-bottom:4px}
-/* badges */
-.b{padding:2px 7px;border-radius:10px;font-size:.73rem;font-weight:700}
-.b.today{background:#fff5f5;color:#c53030}
-.b.urgent{background:#fff5f5;color:#c53030}
-.b.soon{background:#fffaf0;color:#c05621}
-.b.future{background:#f0fff4;color:#276749}
-.b.past{background:#f7fafc;color:#a0aec0}
-footer{text-align:center;color:#a0aec0;font-size:.73rem;padding:18px}
-/* ops status */
-.ops-card{background:linear-gradient(135deg,#fffaf0,#fff5f5);border:1.5px solid #ed8936;border-radius:14px;padding:20px 22px}
-.ops-card.ok{background:linear-gradient(135deg,#f0fff4,#e6fffa);border-color:#48bb78}
-.ops-card .ctitle::before{background:#ed8936}
-.ops-card.ok .ctitle::before{background:#38a169}
-.ops-issue{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:.84rem}
-.ops-issue:last-child{margin-bottom:0}
-.ops-issue.urgent{background:#fff5f5;border-left:3px solid #e53e3e;color:#c53030}
-.ops-issue.warning{background:#fffaf0;border-left:3px solid #ed8936;color:#c05621}
-.ops-issue-mark{font-size:1rem;flex-shrink:0}
-.ops-issue-body{flex:1}
-.ops-issue-msg{font-weight:600}
-.ops-issue-tasks{font-size:.75rem;color:#718096;margin-top:3px}
-.ops-week{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
-.ops-week-col{}
-.ops-week-title{font-size:.72rem;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.ops-task-row{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px solid #e2e8f0;font-size:.83rem}
-.ops-task-row:last-child{border-bottom:none}
-.ops-task-date{color:#718096;font-size:.76rem;min-width:54px;flex-shrink:0}
-.ops-task-name{flex:1;color:#2d3748}
-.ops-task-src{font-size:.72rem;color:#a0aec0}
-.ops-ok-msg{font-size:.84rem;color:#38a169;font-weight:600;padding:8px 0}
-/* agent drafts */
-.agent-card{background:linear-gradient(135deg,#f0fff4,#e6fffa);border:1.5px solid #48bb78;border-radius:14px;padding:20px 22px}
-.agent-card .ctitle::before{background:#38a169}
-.agent-intro{font-size:.82rem;color:#276749;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.draft-item{background:#fff;border-radius:10px;padding:12px 16px;margin-bottom:10px;border-left:4px solid #48bb78;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.draft-item:last-child{margin-bottom:0}
-.draft-item.urgent{border-left-color:#e53e3e}
-.draft-item.soon{border-left-color:#ed8936}
-.draft-meta{flex:1}
-.draft-proj{font-size:.7rem;color:#718096;font-weight:700;margin-bottom:2px}
-.draft-action{font-size:.86rem;color:#2d3748;font-weight:600}
-.draft-dl{font-size:.73rem;color:#718096;margin-top:3px}
-.draft-badge{flex-shrink:0;padding:3px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
-.draft-badge.overdue{background:#fff5f5;color:#c53030}
-.draft-badge.urgent{background:#fff5f5;color:#c53030}
-.draft-badge.soon{background:#fffaf0;color:#c05621}
-.no-urgent{font-size:.82rem;color:#48bb78;padding:8px 0}
+.card{background:var(--card);border-radius:9px 11px 8px 10px;padding:24px 28px;border:1px solid var(--border);box-shadow:0 1px 0 rgba(42,38,34,.02)}
+.ctitle{font-size:1.08rem;font-weight:900;letter-spacing:.14em;color:var(--text);margin-bottom:22px;display:flex;align-items:center;gap:12px;position:relative}
+.ctitle::before{content:'';width:5px;height:20px;border-radius:1px;background:var(--accent);display:inline-block}
+.ctitle::after{content:'';position:absolute;left:17px;right:0;bottom:-9px;height:2px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 2' preserveAspectRatio='none'><path d='M0 1 Q 25 0 50 1 T 100 1' fill='none' stroke='%23d6d8dc' stroke-width='1.3'/></svg>") repeat-x;background-size:100px 2px}
+
+/* project cards */
+.cat-section{margin-bottom:10px}
+.cat-header{font-size:.95rem;font-weight:900;color:var(--text);padding:8px 16px;border-left:3px solid var(--accent);background:var(--faint);border-radius:0 7px 6px 0;margin-bottom:14px;display:flex;align-items:center;gap:10px;letter-spacing:.05em}
+.cat-badge{font-size:.7rem;font-weight:700;background:var(--card);color:var(--sub);padding:3px 10px;border-radius:9px 8px 9px 8px;margin-left:auto;border:1px solid var(--border)}
+.pj-grid{position:relative;margin-bottom:22px}
+.pj{padding:16px 18px;background:#edf0f4;border-radius:0 9px 11px 8px;border:1px solid var(--border);border-left:3px solid var(--mute)}
+.pj-body{}
+.pj.pj-span2 .pj-body{column-count:2;column-gap:20px}
+.pj.pj-span3 .pj-body{column-count:3;column-gap:20px}
+@media (max-width:1100px){.pj.pj-span3 .pj-body{column-count:2}}
+@media (max-width:700px){.pj.pj-span2 .pj-body,.pj.pj-span3 .pj-body{column-count:1}}
+.pj-body .prog-row{break-inside:avoid;display:block}
+.pj.skeleton{opacity:.42}
+.pj-name{font-weight:900;font-size:1.05rem;color:var(--bg);background:var(--text);margin:-16px -18px 12px;padding:11px 15px;border-radius:0 7px 0 0;display:flex;align-items:center;gap:6px;letter-spacing:.04em}
+.pj-name .skel-tag{font-size:.68rem;font-weight:500;color:var(--mute);margin-left:6px}
+.pj-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:middle;flex-shrink:0;box-shadow:0 0 0 2px var(--bg)}
+
+/* event rows */
+.ev-row{padding:6px 0 6px 10px;border-bottom:1px dashed var(--border);border-left:2px solid var(--faint);margin-left:4px}
+.ev-row:last-child{border-bottom:none}
+.ev-name{font-size:.86rem;font-weight:500;color:var(--sub);margin-bottom:4px;letter-spacing:.01em}
+.ev-bar-wrap{display:flex;align-items:center;gap:10px}
+.ev-bar{flex:1;height:12px;background:var(--faint);border-radius:7px 6px 7px 6px;overflow:hidden;border:1px solid var(--border)}
+.ev-bar-fill{height:100%;border-radius:6px}
+.ev-pct{font-size:.82rem;color:var(--sub);font-weight:700;min-width:32px}
+.ev-time{font-size:.82rem;font-weight:900;white-space:nowrap;padding:3px 10px;border-radius:5px 4px 5px 4px;border:1px solid;line-height:1.25;letter-spacing:.04em}
+.ev-time.red{color:var(--bg);background:var(--accent);border-color:var(--accent-deep)}
+.ev-time.yellow{color:var(--accent-deep);background:var(--accent-pale);border-color:var(--accent-pale)}
+.ev-time.green{color:var(--sub);background:var(--faint);border-color:var(--border)}
+.ev-time.done{color:var(--sub);background:var(--faint);border-color:var(--border)}
+.ev-time.mute{color:var(--mute);background:var(--faint);border-color:var(--border)}
+.ev-next{font-size:.86rem;font-weight:500;color:var(--sub);margin-top:4px;padding-left:2px}
+.pj-summary{font-size:.85rem;color:var(--sub);margin-top:9px;padding-top:7px;border-top:1px dashed var(--border)}
+
+/* actions */
+.action-list{}
+.act-item{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px dashed var(--border);font-size:.95rem}
+.act-item:last-child{border-bottom:none}
+.act-badge{flex-shrink:0;padding:4px 10px;border-radius:5px 4px 5px 4px;font-size:.82rem;font-weight:900;min-width:62px;text-align:center;letter-spacing:.04em}
+.act-badge.overdue,.act-badge.today{background:var(--accent);color:var(--bg);border:1px solid var(--accent-deep)}
+.act-badge.urgent{background:var(--accent-pale);color:var(--accent-deep);border:1px solid var(--accent)}
+.act-badge.soon{background:var(--faint);color:var(--text);border:1px solid var(--mute)}
+.act-badge.future{background:var(--faint);color:var(--sub);border:1px solid var(--border)}
+.act-proj{font-size:.8rem;color:var(--sub);margin-top:3px}
+
+/* program rows */
+.prog-row{margin:12px 0 14px;padding:10px 10px 10px 10px;border-top:none;background:var(--card);border-radius:0 6px 5px 0;border-left:3px solid var(--mute)}
+.prog-row:first-of-type{margin-top:4px}
+.prog-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.prog-pillar{font-size:.72rem;font-weight:900;background:var(--accent-pale);color:var(--accent-deep);padding:2px 8px;border-radius:4px;letter-spacing:.05em}
+.prog-name{font-size:1rem;font-weight:900;color:var(--text);flex:1;letter-spacing:.02em}
+.prog-status{font-size:.74rem;color:var(--sub);font-weight:500}
+.ev-date{font-size:.74rem;color:var(--mute);margin-right:4px;font-weight:600}
+.empty-msg{font-size:.78rem;color:var(--mute);margin-top:6px;font-style:italic}
+.orig-tag{font-size:.66rem;font-weight:500;color:var(--bg);background:var(--mute);padding:1px 6px;border-radius:3px;letter-spacing:.04em}
+
+/* pillar matrix */
+.pillar-matrix{border-collapse:collapse;width:100%;font-size:.88rem}
+.pillar-matrix th, .pillar-matrix td{padding:8px 10px;text-align:center;border-bottom:1px dashed var(--border)}
+.pillar-matrix th{font-weight:900;letter-spacing:.05em;color:var(--sub);background:var(--faint)}
+.pillar-matrix th:first-child, .pillar-matrix td:first-child{text-align:left}
+.pm-name{font-weight:700;color:var(--text);text-decoration:none}
+.pm-name:hover{color:var(--accent)}
+.pm-nat{display:inline-block;font-size:.72rem;font-weight:900;padding:2px 9px;border-radius:4px;letter-spacing:.05em}
+.pm-cell.pm-empty{color:var(--mute)}
+.pm-cell.pm-filled{color:var(--text);font-weight:700}
+.pm-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-right:3px;vertical-align:middle}
+.pm-dot-lg{width:18px;height:18px;margin-right:5px;background:var(--accent-deep)}
+
+footer{text-align:center;color:var(--mute);font-size:.74rem;font-weight:500;padding:28px;letter-spacing:.08em}
+
+/* update button */
+.btn-update{display:flex;align-items:center;gap:6px;padding:7px 16px;background:var(--accent);color:var(--bg);border:none;border-radius:6px 5px 6px 5px;font-family:inherit;font-size:.84rem;font-weight:700;letter-spacing:.05em;cursor:pointer;transition:background .15s}
+.btn-update:hover{background:var(--accent-deep)}
+.btn-update:disabled{background:var(--mute);cursor:default}
+.btn-update svg{width:14px;height:14px;fill:currentColor}
+
+/* drive links */
+.pj-name a{color:inherit;text-decoration:none}
+.pj-name a:hover{text-decoration:underline;opacity:.85}
+.prog-name a{color:inherit;text-decoration:none}
+.prog-name a:hover{color:var(--accent)}
+.drive-icon{display:inline-block;width:12px;height:12px;vertical-align:middle;margin-left:4px;opacity:.45;flex-shrink:0}
+.folder-icon{display:inline-block;width:13px;height:13px;vertical-align:middle;margin-left:5px;opacity:.35;flex-shrink:0}
+.folder-icon:hover{opacity:.7}
+.ev-name a{color:inherit;text-decoration:none}
+.ev-name a:hover{color:var(--accent)}
 </style>
 </head>
 <body>
 <header>
-  <h1>🌍 萩ジオパーク 業務ポータル</h1>
+  <h1><span>●</span> 萩ジオパーク 業務ポータル</h1>
   <div class="hright">
-    <span class="gen-time">最終更新: 2026-05-22 15:39</span>
-    <button class="update-btn" onclick="doUpdate()" id="updbtn">🔄 更新</button>
-    <div class="hdate">2026年5月22日（金）</div>
+    <span class="gen-time">生成: 2026-05-26 10:18</span>
+    <div class="hdate">2026年5月26日</div>
+    <button class="btn-update" id="btnUpdate" onclick="doUpdate()">
+      <svg viewBox="0 0 16 16"><path d="M13.65 2.35A8 8 0 1 0 15 8h-2a6 6 0 1 1-1.06-3.39l-1.72 1.72H14V2l-2 .01-.35.34z"/></svg>
+      更新
+    </button>
   </div>
 </header>
 <script>
-function doUpdate() {
-  var btn = document.getElementById('updbtn');
-  btn.disabled = true;
-  btn.textContent = '更新中...';
-  window.location.href = '/update';
+function masonryLayout(){
+  const GAP=16;
+  document.querySelectorAll('.pj-grid').forEach(grid=>{
+    const cards=Array.from(grid.children);
+    cards.forEach(c=>{c.style.cssText='';const b=c.querySelector('.pj-body');if(b)b.style.columnCount=''});
+    grid.style.height='';
+    const W=grid.clientWidth;
+    const cols=W<700?1:W<1100?2:3;
+    if(cols===1) return;
+    const cw=(W-GAP*(cols-1))/cols;
+
+    // スパンごとの高さを事前計測
+    const items=cards.map(c=>{
+      const progs=parseInt(c.dataset.progs||'0');
+      const maxS=progs<=1?1:progs<=2?Math.min(2,cols):cols;
+      const hs={};
+      for(let s=1;s<=maxS;s++){
+        const body=c.querySelector('.pj-body');
+        c.style.width=(cw*s+GAP*(s-1))+'px';
+        if(body) body.style.columnCount=s>1?s:'';
+        hs[s]=c.offsetHeight;
+      }
+      c.style.width='';
+      if(c.querySelector('.pj-body')) c.querySelector('.pj-body').style.columnCount='';
+      return{c,progs,maxS,hs};
+    });
+
+    // 貪欲法：(カード×スパン)の全組み合わせから最大列高が最小になるものを選択
+    function bestCol(s,tops){
+      let col=0;
+      if(s===1)return tops.indexOf(Math.min(...tops));
+      if(s===2){for(let j=0;j<=cols-2;j++)if(Math.max(tops[j],tops[j+1])<Math.max(tops[col],tops[col+1]))col=j;return col;}
+      return 0;
+    }
+    function topFor(s,col,tops){
+      if(s===1)return tops[col];
+      if(s===2)return Math.max(tops[col],tops[col+1]);
+      return Math.max(...tops);
+    }
+
+    const tops=Array(cols).fill(0);
+    const remaining=[...items];
+    while(remaining.length){
+      let bestScore=Infinity,bestIdx=0,bestS=1,bestC=0,bestT=0;
+      remaining.forEach((it,idx)=>{
+        for(let s=1;s<=it.maxS;s++){
+          const col=bestCol(s,tops);
+          const top=topFor(s,col,tops);
+          const tmp=[...tops];
+          const bot=top+it.hs[s]+GAP;
+          for(let j=col;j<col+s;j++)tmp[j]=bot;
+          const score=Math.max(...tmp);
+          if(score<bestScore){bestScore=score;bestIdx=idx;bestS=s;bestC=col;bestT=top;}
+        }
+      });
+      const it=remaining.splice(bestIdx,1)[0];
+      const s=bestS,col=bestC,top=bestT;
+      it.c.style.position='absolute';
+      it.c.style.width=(cw*s+GAP*(s-1))+'px';
+      it.c.style.left=(col*(cw+GAP))+'px';
+      it.c.style.top=top+'px';
+      const body=it.c.querySelector('.pj-body');
+      if(body&&s>1)body.style.columnCount=s;
+      const bot=top+it.hs[s]+GAP;
+      for(let j=col;j<col+s;j++)tops[j]=bot;
+    }
+    grid.style.height=(Math.max(...tops)-GAP)+'px';
+  });
 }
-// ファイル直接開きの場合はボタンを隠す
-if (window.location.protocol === 'file:') {
-  document.getElementById('updbtn').style.display = 'none';
+window.addEventListener('load',masonryLayout);
+window.addEventListener('resize',masonryLayout);
+
+async function doUpdate(){
+  const btn = document.getElementById('btnUpdate');
+  btn.disabled = true; btn.textContent = '更新中...';
+  if(location.protocol === 'file:'){
+    alert('サーバー経由で開いてください:\npython scripts/dashboard_server.py\nhttp://localhost:8765/');
+    btn.disabled = false; btn.textContent = '更新';
+    return;
+  }
+  try{
+    const r = await fetch('/update', {method:'POST'});
+    if(r.ok) location.reload();
+    else alert('更新に失敗しました');
+  }catch(e){
+    alert('サーバーに接続できません');
+  }
+  btn.disabled = false; btn.textContent = '更新';
 }
+
 </script>
 <div class="wrap">
 
-  <!-- 統計・年間進捗 -->
   <div class="card span3">
-    <div class="ctitle">今年の活動サマリー</div>
-    
-    <div class="stats">
-      <div class="stat-gauge">
-        <svg width="110" height="110" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="10"/>
-  <circle cx="50" cy="50" r="40" fill="none" stroke="#3182ce" stroke-width="10"
-    stroke-dasharray="164.5 251.3" stroke-linecap="round"
-    transform="rotate(-90 50 50)"/>
-  <text x="50" y="46" text-anchor="middle" font-size="18" font-weight="800" fill="#2d3748">72</text>
-  <text x="50" y="62" text-anchor="middle" font-size="10" fill="#718096">/110件</text>
-</svg>
-        <div class="glabel">年間総件数</div>
+    <div class="ctitle">プロジェクト系統図</div>
+    <div class="tree-wrap"><svg width="100%" height="384" viewBox="0 0 535 384" preserveAspectRatio="xMidYMid meet" style="display:block;font-family:inherit">
+<path d="M 28 172.0 L 143 172.0 Q 150 172.0 150 180.0 L 150 205.0 Q 150 212.0 142 212.0 L 27 212.0 Q 20 212.0 20 204.0 L 20 179.0 Q 20 172.0 28 172.0 Z" fill="#2a2622"/><text x="85.0" y="197.0" text-anchor="middle" fill="#f1f2f5" font-size="15" font-weight="900" letter-spacing="0.08em">萩ジオパーク</text>
+<path d="M 150 192.0 C 180.0 192.0, 180.0 94.0, 210 94.0" fill="none" stroke="#a59f95" stroke-width="1.4" stroke-linecap="round"/>
+<rect x="210" y="79.0" width="100" height="30" rx="5" ry="6" fill="#fafbfd" stroke="#c63838" stroke-width="1.6"/><rect x="210" y="79.0" width="4" height="30" fill="#c63838"/><text x="262.0" y="99.0" text-anchor="middle" fill="#2a2622" font-size="13" font-weight="900" letter-spacing="0.06em">共同</text>
+<path d="M 310 94.0 C 335.0 94.0, 335.0 38.0, 360 38.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-0" class="tree-pj"><circle cx="365" cy="38.0" r="3.8" fill="#c63838" opacity="1"/><text x="376" y="42.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">学術研究</text></a>
+<path d="M 310 94.0 C 335.0 94.0, 335.0 66.0, 360 66.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-1" class="tree-pj"><circle cx="365" cy="66.0" r="3.8" fill="#c63838" opacity="1"/><text x="376" y="70.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">川上藍</text></a>
+<path d="M 310 94.0 C 335.0 94.0, 335.0 94.0, 360 94.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-2" class="tree-pj"><circle cx="365" cy="94.0" r="3.8" fill="#c63838" opacity="1"/><text x="376" y="98.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">磯の健康</text></a>
+<path d="M 310 94.0 C 335.0 94.0, 335.0 122.0, 360 122.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-3" class="tree-pj"><circle cx="365" cy="122.0" r="3.8" fill="#c63838" opacity="1"/><text x="376" y="126.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">笠山風穴</text></a>
+<path d="M 310 94.0 C 335.0 94.0, 335.0 150.0, 360 150.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-4" class="tree-pj"><circle cx="365" cy="150.0" r="3.8" fill="#c63838" opacity="1"/><text x="376" y="154.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">藍を継ぐ海</text></a>
+<path d="M 150 192.0 C 180.0 192.0, 180.0 248.0, 210 248.0" fill="none" stroke="#a59f95" stroke-width="1.4" stroke-linecap="round"/>
+<rect x="210" y="233.0" width="100" height="30" rx="5" ry="6" fill="#fafbfd" stroke="#2a2622" stroke-width="1.6"/><rect x="210" y="233.0" width="4" height="30" fill="#2a2622"/><text x="262.0" y="253.0" text-anchor="middle" fill="#2a2622" font-size="13" font-weight="900" letter-spacing="0.06em">主体</text>
+<path d="M 310 248.0 C 335.0 248.0, 335.0 178.0, 360 178.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-5" class="tree-pj"><circle cx="365" cy="178.0" r="3.8" fill="#2a2622" opacity="1"/><text x="376" y="182.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">JGN連携</text></a>
+<path d="M 310 248.0 C 335.0 248.0, 335.0 206.0, 360 206.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-6" class="tree-pj"><circle cx="365" cy="206.0" r="3.8" fill="#2a2622" opacity="1"/><text x="376" y="210.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">フィールドラボ</text></a>
+<path d="M 310 248.0 C 335.0 248.0, 335.0 234.0, 360 234.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-7" class="tree-pj"><circle cx="365" cy="234.0" r="3.8" fill="#2a2622" opacity="1"/><text x="376" y="238.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">協議会運営</text></a>
+<path d="M 310 248.0 C 335.0 248.0, 335.0 262.0, 360 262.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-8" class="tree-pj"><circle cx="365" cy="262.0" r="3.8" fill="#2a2622" opacity="1"/><text x="376" y="266.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">萩ジオパーク倶楽部</text></a>
+<path d="M 310 248.0 C 335.0 248.0, 335.0 290.0, 360 290.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-9" class="tree-pj"><circle cx="365" cy="290.0" r="3.8" fill="#2a2622" opacity="1"/><text x="376" y="294.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">萩ジオパーク発信</text></a>
+<path d="M 310 248.0 C 335.0 248.0, 335.0 318.0, 360 318.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-10" class="tree-pj"><circle cx="365" cy="318.0" r="3.8" fill="#2a2622" opacity="1"/><text x="376" y="322.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">萩ジオユニバース</text></a>
+<path d="M 150 192.0 C 180.0 192.0, 180.0 346.0, 210 346.0" fill="none" stroke="#a59f95" stroke-width="1.4" stroke-linecap="round"/>
+<rect x="210" y="331.0" width="100" height="30" rx="5" ry="6" fill="#fafbfd" stroke="#a59f95" stroke-width="1.6"/><rect x="210" y="331.0" width="4" height="30" fill="#a59f95"/><text x="262.0" y="351.0" text-anchor="middle" fill="#2a2622" font-size="13" font-weight="900" letter-spacing="0.06em">依頼</text>
+<path d="M 310 346.0 C 335.0 346.0, 335.0 346.0, 360 346.0" fill="none" stroke="#d8d2c4" stroke-width="1.2" stroke-linecap="round"/>
+<a href="#pj-11" class="tree-pj"><circle cx="365" cy="346.0" r="3.8" fill="#a59f95" opacity="1"/><text x="376" y="350.5" fill="#2a2622" font-size="13" font-weight="700" opacity="1" letter-spacing="0.02em">依頼対応</text></a>
+</svg></div>
+  </div>
+
+  <div class="card span3">
+    <div class="ctitle">4要素診断（基盤・共感・試行錯誤・出会い）</div>
+    <table class="pillar-matrix"><thead><tr><th>プロジェクト</th><th>nature</th><th>基盤</th><th>共感</th><th>試行錯誤</th><th>出会い</th></tr></thead><tbody><tr><td><a href="#pj-0" class="pm-name">学術研究</a></td><td><span class="pm-nat" style="background:#c63838;color:#fafbfd">共同</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-1" class="pm-name">川上藍</a></td><td><span class="pm-nat" style="background:#c63838;color:#fafbfd">共同</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-2" class="pm-name">磯の健康</a></td><td><span class="pm-nat" style="background:#c63838;color:#fafbfd">共同</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-3" class="pm-name">笠山風穴</a></td><td><span class="pm-nat" style="background:#c63838;color:#fafbfd">共同</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-filled"><span class="pm-dot"></span><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-4" class="pm-name">藍を継ぐ海</a></td><td><span class="pm-nat" style="background:#c63838;color:#fafbfd">共同</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-5" class="pm-name">JGN連携</a></td><td><span class="pm-nat" style="background:#2a2622;color:#fafbfd">主体</span></td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-6" class="pm-name">フィールドラボ</a></td><td><span class="pm-nat" style="background:#2a2622;color:#fafbfd">主体</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-7" class="pm-name">協議会運営</a></td><td><span class="pm-nat" style="background:#2a2622;color:#fafbfd">主体</span></td><td class="pm-cell pm-filled"><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-8" class="pm-name">萩ジオパーク倶楽部</a></td><td><span class="pm-nat" style="background:#2a2622;color:#fafbfd">主体</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-9" class="pm-name">萩ジオパーク発信</a></td><td><span class="pm-nat" style="background:#2a2622;color:#fafbfd">主体</span></td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span></td></tr><tr><td><a href="#pj-10" class="pm-name">萩ジオユニバース</a></td><td><span class="pm-nat" style="background:#2a2622;color:#fafbfd">主体</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-empty">−</td></tr><tr><td><a href="#pj-11" class="pm-name">依頼対応</a></td><td><span class="pm-nat" style="background:#a59f95;color:#fafbfd">依頼</span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span><span class="pm-dot"></span></td><td class="pm-cell pm-empty">−</td><td class="pm-cell pm-filled"><span class="pm-dot"></span></td></tr></tbody></table>
+  </div>
+
+  <div class="card span3">
+    <div class="ctitle">プロジェクト一覧（nature別）</div>
+
+    <div class="cat-section">
+      <div class="cat-header" style="border-left-color:#c63838">
+        <span>共同</span>
+        <span class="cat-badge">5/5</span>
       </div>
-      <div class="stat-gauge">
-        <svg width="110" height="110" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" stroke-width="10"/>
-  <circle cx="50" cy="50" r="40" fill="none" stroke="#38a169" stroke-width="10"
-    stroke-dasharray="71.2 251.3" stroke-linecap="round"
-    transform="rotate(-90 50 50)"/>
-  <text x="50" y="46" text-anchor="middle" font-size="18" font-weight="800" fill="#2d3748">17</text>
-  <text x="50" y="62" text-anchor="middle" font-size="10" fill="#718096">/60件</text>
-</svg>
-        <div class="glabel">講演・授業</div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-box accent"><div class="sv">14</div><div class="sl">出前授業</div></div>
-        <div class="stat-box green"><div class="sv">3</div><div class="sl">講演</div></div>
-        <div class="stat-box orange"><div class="sv">5</div><div class="sl">イベント</div></div>
-        <div class="stat-box"><div class="sv">37</div><div class="sl">会議・打合せ</div></div>
-        <div style="flex:1;min-width:160px">
-          <svg width="232" height="78" viewBox="0 0 232 78">
-  <rect x="10" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="28" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="46" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="64" y="11" width="14" height="49" fill="#a0d4f5" rx="2"/><text x="71" y="9" text-anchor="middle" font-size="8" fill="#4a5568">24</text><rect x="82" y="0" width="14" height="60" fill="#3182ce" rx="2"/><text x="89" y="-2" text-anchor="middle" font-size="8" fill="#4a5568">29</text><rect x="100" y="25" width="14" height="35" fill="#a0d4f5" rx="2"/><text x="107" y="23" text-anchor="middle" font-size="8" fill="#4a5568">17</text><rect x="118" y="56" width="14" height="4" fill="#a0d4f5" rx="2"/><text x="125" y="54" text-anchor="middle" font-size="8" fill="#4a5568">2</text><rect x="136" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="154" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="172" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="190" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><rect x="208" y="58" width="14" height="2" fill="#a0d4f5" rx="2"/><text x="17" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">1</text><text x="35" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">2</text><text x="53" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">3</text><text x="71" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">4</text><text x="89" y="72" text-anchor="middle" font-size="8" fill="#2b6cb0" font-weight="700">5</text><text x="107" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">6</text><text x="125" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">7</text><text x="143" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">8</text><text x="161" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">9</text><text x="179" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">10</text><text x="197" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">11</text><text x="215" y="72" text-anchor="middle" font-size="8" fill="#a0aec0" font-weight="400">12</text>
-</svg>
-          <div style="font-size:.68rem;color:#a0aec0;text-align:center;margin-top:2px">月別件数（今年）</div>
+      <div class="pj-grid">
+
+        <div class="pj" id="pj-0" style="border-left-color:#c63838" data-progs="1">
+          <div class="pj-name"><span class="pj-dot" style="background:#c63838"></span><a href="https://docs.google.com/document/d/1cMh8jTWV-8_OIiPAgU-qqCB1-34ofHPRERz-2D3l9jI/edit" target="_blank">学術研究<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1q650PNGdERBJL3qQzzWjaLZaka7mnuOm" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a> <span class="orig-tag">外発</span></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1gSur7CP5piqi4KIpES-3jWdWPC8x3efv8RWh8sB4HE8/edit" target="_blank">むつみ地下水研究<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1Ab7eLCrzH8vXty115BUuI3f95MjC9JiF" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-1" style="border-left-color:#c63838" data-progs="2">
+          <div class="pj-name"><span class="pj-dot" style="background:#c63838"></span><a href="https://docs.google.com/document/d/16mDuXL_qI8RKyzKKncw4HWeaDvzQnbduet00km7Sg8o/edit" target="_blank">川上藍<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1FVlWksIruhuVOweOqVda_udSFyPlGwFe" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a> <span class="orig-tag">内発</span></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/17RBzgqJu1k8V3vVD2-A4jjhvAiY-BZOu7DMTQDsZJAc/edit" target="_blank">川上小学校_藍学習<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1M_C2q7x9paUkHNyhBp4xs-sFHtIiB4yF" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/14(木)</span>川上小学校 藍学習戦略</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:100%;background:#2a2622"></div></div>
+                  <span class="ev-pct">完了</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1ia4CQWO3O28wQxF1bhNWNJKrxwj2qm4r3ocAIKcqCP4/edit" target="_blank">体験プログラム造成<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1M4wVQsUUgTlnX2mpduweatGrOSkW4dQK" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">7/15(水)</span>JA女性部 叩き染め体験</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと50日</span>
+                </div><div class="ev-next">→ ライト参加モデル＋ステップアップの仕組みを設計→上原さんへ提案</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-2" style="border-left-color:#c63838" data-progs="1">
+          <div class="pj-name"><span class="pj-dot" style="background:#c63838"></span><a href="https://docs.google.com/document/d/11ZfgCSGfWPFx-G1C3meDGMk4cAT9sPdGbM7RflUV4Do/edit" target="_blank">磯の健康<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1NEG50A2RhJpWxdvOUVbwTz7EJvQABrTH" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a> <span class="orig-tag">外発</span></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1ZC17Xc_DanhDHh18WNgCis2JKwvOZC11MhiA1mzYLVY/edit" target="_blank">ウニ養殖<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1pyzWTRQVVZDpa_X0ie9hv8JY54-m85Bj" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">6/3(水)</span>野田学園現地学習<a href="https://drive.google.com/drive/folders/1bkwJn1ASu4R_AKqxKTz0ayP45lhwxgED" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:50%;background:#c63838"></div></div>
+                  <span class="ev-pct">進行中</span>
+                  <span class="ev-time green">あと8日</span>
+                </div><div class="ev-next">→ 事前連絡（福本さんへ参加確認・道具持参の連絡）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-3" style="border-left-color:#c63838" data-progs="3">
+          <div class="pj-name"><span class="pj-dot" style="background:#c63838"></span><a href="https://docs.google.com/document/d/1VLfBdNHrCBrN0CS9zMAA5e1LjlPVC6KXK0ozqLnZC78/edit" target="_blank">笠山風穴<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1BVij9VPu7ISCNKxWoHb2uHtbkh0s6F14" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a> <span class="orig-tag">内発</span></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1oSKSuDauSKhD1T_HvFOy5Lsfy9Ghf4gDvMR9vFG-sXw/edit" target="_blank">笠山ヒヤシツアー<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/139_Y2sdSASo4a93uZBFRUFFQSzXMIRmZ" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">準備中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">6/14(日)</span>笠山ヒヤシショートツアー<a href="https://drive.google.com/drive/folders/1FJz6JsecwcntUasS9vY_EmwiSDoN3qvn" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと19日</span>
+                </div><div class="ev-next">→ 参加者募集・告知（チラシ・SNS）</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/10zDS3cJ3fNN0o7YG8D5OK1gA7UVphdMfu5uDTQUt74U/edit" target="_blank">笠山ヒエヒエ風穴ラボ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/108ZRHrWZ4kJiZGdBCYBe9mh9x4NSwfwy" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">7/25(土)</span>オープンラボ夏<a href="https://drive.google.com/drive/folders/1NTtDvzh7jTe3G0rr4qz86C-MSuuQ9EjA" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと60日</span>
+                </div><div class="ev-next">→ 加工場の使用許可を確認・取得</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">12/1(火)</span>オープンラボ冬</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと189日</span>
+                </div><div class="ev-next">→ 12月日程の確定</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">2/1(月)</span>ラボ成果発表会</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと251日</span>
+                </div><div class="ev-next">→ 会場・日程の確定</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1x9TqtXFRyAoFzp63_1bWGDuEzevQibgSxp1-RRycXSM/edit" target="_blank">風穴熟成日本酒<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1RFufhEaCRr21RSRVOZzCYGhv54TBr9ZW" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-4" style="border-left-color:#c63838" data-progs="0">
+          <div class="pj-name"><span class="pj-dot" style="background:#c63838"></span><a href="https://docs.google.com/document/d/1qZXE-z78jHPYfiB8YjsxLANhHuZYT9GgpZja3fHaMeM/edit" target="_blank">藍を継ぐ海<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1tjlFeDz6pipOs4330O3i-fBAVB6f7ks0" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a> <span class="orig-tag">外発</span></div>
+          <div class="pj-body">
+          <div class="empty-msg">プログラム未登録</div>
+          </div>
         </div>
       </div>
     </div>
-    
-    
-    <div class="legend" style="margin-top:12px"><span class="leg-item"><span class="leg-dot" style="background:#38a169"></span>学校対応</span><span class="leg-item"><span class="leg-dot" style="background:#3182ce"></span>依頼・講演</span><span class="leg-item"><span class="leg-dot" style="background:#d69e2e"></span>イベント・出展</span><span class="leg-item"><span class="leg-dot" style="background:#718096"></span>会議・打合せ</span><span class="leg-item"><span class="leg-dot" style="background:#a0aec0"></span>その他</span></div>
-  </div>
 
-  <!-- タイムライン（28日）-->
-  <div class="card span3">
-    <div class="ctitle">直近28日タイムライン（Googleカレンダー）</div>
-    <div class="timeline-wrap"><svg width="840" height="46" viewBox="0 0 840 46" style="overflow:visible">
-  <rect x="0" y="0" width="30" height="46" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/><text x="15" y="13" text-anchor="middle" font-size="9" font-weight="800" fill="#2d3748">22</text><text x="15" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><rect x="30" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="45" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">23</text><text x="45" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="60" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="75" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">24</text><text x="75" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="90" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="105" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">25</text><text x="105" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><circle cx="105" cy="34" r="4" fill="#38a169"/><circle cx="105" cy="44" r="4" fill="#38a169"/><rect x="120" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="135" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">26</text><text x="135" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><circle cx="135" cy="34" r="4" fill="#718096"/><rect x="150" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="165" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">27</text><text x="165" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><rect x="180" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="195" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">28</text><text x="195" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text><circle cx="195" cy="34" r="4" fill="#38a169"/><circle cx="195" cy="44" r="4" fill="#718096"/><rect x="210" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="225" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">29</text><text x="225" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><rect x="240" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="255" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">30</text><text x="255" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="270" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="285" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">31</text><text x="285" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="300" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="315" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">1</text><text x="315" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><rect x="330" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="345" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">2</text><text x="345" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><circle cx="345" cy="34" r="4" fill="#38a169"/><circle cx="345" cy="44" r="4" fill="#a0aec0"/><rect x="360" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="375" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">3</text><text x="375" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><circle cx="375" cy="34" r="4" fill="#38a169"/><rect x="390" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="405" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">4</text><text x="405" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text><rect x="420" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="435" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">5</text><text x="435" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><circle cx="435" cy="34" r="4" fill="#38a169"/><rect x="450" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="465" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">6</text><text x="465" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="480" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="495" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">7</text><text x="495" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><rect x="510" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="525" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">8</text><text x="525" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><circle cx="525" cy="34" r="4" fill="#718096"/><rect x="540" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="555" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">9</text><text x="555" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><circle cx="555" cy="34" r="4" fill="#718096"/><circle cx="555" cy="44" r="4" fill="#38a169"/><rect x="570" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="585" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">10</text><text x="585" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><circle cx="585" cy="34" r="4" fill="#a0aec0"/><circle cx="585" cy="44" r="4" fill="#a0aec0"/><rect x="600" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="615" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">11</text><text x="615" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text><circle cx="615" cy="34" r="4" fill="#38a169"/><rect x="630" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="645" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">12</text><text x="645" y="23" text-anchor="middle" font-size="7" fill="#718096">金</text><rect x="660" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="675" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">13</text><text x="675" y="23" text-anchor="middle" font-size="7" fill="#2b6cb0">土</text><rect x="690" y="0" width="30" height="46" fill="#f7f7f7" stroke="#e2e8f0" stroke-width="0.5"/><text x="705" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">14</text><text x="705" y="23" text-anchor="middle" font-size="7" fill="#c53030">日</text><circle cx="705" cy="34" r="4" fill="#a0aec0"/><rect x="720" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="735" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">15</text><text x="735" y="23" text-anchor="middle" font-size="7" fill="#718096">月</text><rect x="750" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="765" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">16</text><text x="765" y="23" text-anchor="middle" font-size="7" fill="#718096">火</text><circle cx="765" cy="34" r="4" fill="#3182ce"/><rect x="780" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="795" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">17</text><text x="795" y="23" text-anchor="middle" font-size="7" fill="#718096">水</text><rect x="810" y="0" width="30" height="46" fill="white" stroke="#e2e8f0" stroke-width="0.5"/><text x="825" y="13" text-anchor="middle" font-size="9" font-weight="400" fill="#2d3748">18</text><text x="825" y="23" text-anchor="middle" font-size="7" fill="#718096">木</text>
-</svg></div>
-    <div style="font-size:.72rem;color:#a0aec0;margin-top:6px">
-      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">
-        <span style="width:9px;height:9px;border-radius:50%;background:#38a169;display:inline-block"></span>出前授業
-      </span>
-      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">
-        <span style="width:9px;height:9px;border-radius:50%;background:#3182ce;display:inline-block"></span>講演
-      </span>
-      <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px">
-        <span style="width:9px;height:9px;border-radius:50%;background:#d69e2e;display:inline-block"></span>イベント
-      </span>
-      <span style="display:inline-flex;align-items:center;gap:4px">
-        <span style="width:9px;height:9px;border-radius:50%;background:#718096;display:inline-block"></span>会議
-      </span>
+    <div class="cat-section">
+      <div class="cat-header" style="border-left-color:#2a2622">
+        <span>主体</span>
+        <span class="cat-badge">6/6</span>
+      </div>
+      <div class="pj-grid">
+
+        <div class="pj" id="pj-5" style="border-left-color:#2a2622" data-progs="1">
+          <div class="pj-name"><span class="pj-dot" style="background:#2a2622"></span><a href="https://docs.google.com/document/d/1AOyQFdAxWmKR9noDGuO0GKgDHbNAkyrDkRu6SmiYAqs/edit" target="_blank">JGN連携<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1o7su58TSbMv8ZWz8zpT4P4FWXlhfv8w-" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">基盤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1XrA76StEsDy8gqC6wcT_LFttbeqlfk10Kv0arhTYreg/edit" target="_blank">中四国ブロック<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1LlnzsNW-Jbgjgu2RacVvXbXdXuMHYhEk" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-6" style="border-left-color:#2a2622" data-progs="3">
+          <div class="pj-name"><span class="pj-dot" style="background:#2a2622"></span><a href="https://docs.google.com/document/d/1i6lLGFCLl0dljSHQ4eXn7nbjWAQ5AvGDhfcf4d3DIF0/edit" target="_blank">フィールドラボ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1ec5A72of89A8gn8KKwsXkr0W5HdA-Co8" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1HWS3hgtGqft9jIIx0h2cW64CSkNZo9KgpQysHyUstSM/edit" target="_blank">溶岩ラボ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1KLegm1kzEp-beC8EnACQ83bt07nZpW90" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">準備中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">7/20(月)</span>笠山ゴツゴツ溶岩ラボ<a href="https://drive.google.com/drive/folders/1P8OGwxf8gSKUavAJGi5jPNR0IGLb2PNN" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと55日</span>
+                </div><div class="ev-next">→ 6/8現地下見で会場確定</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1n9ThEraJyP_ah2dyzlbf1Fi0ioG17mQzwu0YhMQrpAg/edit" target="_blank">砂浜ラボ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1xqWGHOppPLtvjdAdVN92tGOdHdJ_NzLl" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">準備中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/22(金)</span>萩ジオツーリズム協会 打合せ</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:100%;background:#2a2622"></div></div>
+                  <span class="ev-pct">完了</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">6/1(月)</span>鈴野川ホタルプレラボ<a href="https://drive.google.com/drive/folders/1mujscTOcJEzlq7kWGEU__9T9LODY59b2" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:0%;background:#d8d2c4"></div></div>
+                  <span class="ev-pct">0/6</span>
+                  <span class="ev-time yellow">あと6日</span>
+                </div><div class="ev-next">→ 弥富チームと打合せ（設計・役割分担・日程確定）</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">7/18(土)</span>菊ヶ浜トワイライト砂浜ラボ<a href="https://drive.google.com/drive/folders/1mfhEABCY6fyAVLpvGQVrdGAZjNYCRuD6" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと53日</span>
+                </div><div class="ev-next">→ 川岸さんスタッフ出欠確認（6/6例会まで）</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">試行錯誤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/10zDS3cJ3fNN0o7YG8D5OK1gA7UVphdMfu5uDTQUt74U/edit" target="_blank">笠山ヒエヒエ風穴ラボ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/108ZRHrWZ4kJiZGdBCYBe9mh9x4NSwfwy" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">7/25(土)</span>オープンラボ夏<a href="https://drive.google.com/drive/folders/1NTtDvzh7jTe3G0rr4qz86C-MSuuQ9EjA" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと60日</span>
+                </div><div class="ev-next">→ 加工場の使用許可を確認・取得</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">12/1(火)</span>オープンラボ冬</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと189日</span>
+                </div><div class="ev-next">→ 12月日程の確定</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">2/1(月)</span>ラボ成果発表会</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time green">あと251日</span>
+                </div><div class="ev-next">→ 会場・日程の確定</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-7" style="border-left-color:#2a2622" data-progs="3">
+          <div class="pj-name"><span class="pj-dot" style="background:#2a2622"></span><a href="https://docs.google.com/document/d/1zVwf3vuIGJ5vLoB4e5B4Hzq_119JYwtgPd3L8mbEjV4/edit" target="_blank">協議会運営<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1fx5jMZuf2LzIBr1FthTUCEPwbvCGz8LV" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">基盤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1Cdx5QLDrcEK0ya66-tC8NWqDJSTTevSUI9PSHCBgmAM/edit" target="_blank">再認定審査2026<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1hzDjJ2jU9D1ARA83znGcq7PJnxoOTtr4" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">基盤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1uBG-O3p9MKVrNY7Sh9j-_tfOnJPmqXM5PkcW9LfxzyM/edit" target="_blank">活動交流会<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1m3vcruKYrNNs20cH4WXGYwVpxeHQdbO-" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">準備中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">基盤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/17Zb2gZAmcyYri6GUIQWRc8H9LzIDnPKw7_zPjEwmKsE/edit" target="_blank">課内MTG<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/11lHnU-UEgiTccu7kHTQOmMRF7qS7QDgW" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-8" style="border-left-color:#2a2622" data-progs="0">
+          <div class="pj-name"><span class="pj-dot" style="background:#2a2622"></span><a href="https://docs.google.com/document/d/1ZmLafjlp6kGzry3DQ4ObYKwkXRCHRfUFJh-7lfnlNG0/edit" target="_blank">萩ジオパーク倶楽部<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1AOoU0CaDkOXw7G2AQnlhUEF_ymrdDBRy" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+          <div class="pj-body">
+          <div class="empty-msg">プログラム未登録</div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-9" style="border-left-color:#2a2622" data-progs="4">
+          <div class="pj-name"><span class="pj-dot" style="background:#2a2622"></span><a href="https://docs.google.com/document/d/1XvNchl7V8u6K1KT-DTo6j5mFN5drinoSYgtZjaB7iJw/edit" target="_blank">萩ジオパーク発信<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1ORsdnJ3l9yGg2TeuQ0T9Mv7ZbSFpaoau" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">基盤</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1-9Yv3JBEOl6NDpJa9CYWWWWefxNJG3qDzH7u4nR9khY/edit" target="_blank">推協だより<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1PWkygoAG_67fV5Lxi2-1oZqDz7GIyNPQ" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">出会い</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1ZQzYJ4qS2ZjnR86taQG_2kpzywWAbK9cKjgcESh6-iA/edit" target="_blank">SNS<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1seIVep6Qi_QB8xo_FHc0Oda89VZPtZc0" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">出会い</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1xpOb1AYra7ypoemqvJTZ6CEMeiXrjAybOJkcfRWdMSQ/edit" target="_blank">広報はぎ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1u7wk048PHeO5jjOZrc8pkpLiEsnCQWZ-" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">出会い</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1oNZ592o503Jqrhor9P2O7fjVzbSzjaihzTt-Wz6G7fw/edit" target="_blank">萩ジオパークフェア<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1jfX_gIHLbqGWHfkWs2ehUS8f1vIbQhOh" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pj" id="pj-10" style="border-left-color:#2a2622" data-progs="4">
+          <div class="pj-name"><span class="pj-dot" style="background:#2a2622"></span><a href="https://docs.google.com/document/d/1XwNF2cbUXM8YCO8BCQz1YzQkOPkyyvghCTB0td3IiCQ/edit" target="_blank">萩ジオユニバース<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/10qdFm_DvJpfaxvKhUlBzG5Y-foBWHwTq" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1Q7hdjPCd_BNmG2XgpDrfqkqLcdeebkDswyIZybdaC5g/edit" target="_blank">こども地球の学校<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1BMN72PXXb5eiAYMRZ1twSLMJLDk5egBh" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/12(火)</span>こども地球の学校 打合せ</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:50%;background:#c63838"></div></div>
+                  <span class="ev-pct">進行中</span>
+                  <span class="ev-time red">14日超過</span>
+                </div><div class="ev-next">→ 楮原先生から受講生の日程確認結果を受ける</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1wtq2PMmYTW2BK7mRMoSDC_6Ji1AcJTepR4lU-RbqQ6Y/edit" target="_blank">ジオカフェ<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1H1u2JLTQhLNbB2gjTFjYhLkJFaZJP2m_" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">構想中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1N3qCivKFjOTc3b23E5PJQF1RqNSKN1HE1d7dEtXZTKk/edit" target="_blank">地球を食べる食堂<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1BjELMu4x5jJdgeaQsJuUZsHhl8bMtABt" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">構想中</span>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1X7Xg9_siIUF23P8BdB-_Ab5QejsTFne-A0HcQj2riVI/edit" target="_blank">萩ジオアカデミー<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1jWFTO8lBnLIUTSTKm6vHucFBb-HDqJMm" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">構想中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-section">
+      <div class="cat-header" style="border-left-color:#a59f95">
+        <span>依頼</span>
+        <span class="cat-badge">1/1</span>
+      </div>
+      <div class="pj-grid">
+
+        <div class="pj" id="pj-11" style="border-left-color:#a59f95" data-progs="5">
+          <div class="pj-name"><span class="pj-dot" style="background:#a59f95"></span><a href="https://docs.google.com/document/d/158HzgiebzmnsD3N94B7gHdB0u40CxlUX69sRL5UOAT8/edit" target="_blank">依頼対応<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1z7H1ubkQocaSuHUtLVAj1CzC5UaC70KC" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a> <span class="orig-tag">外発</span></div>
+          <div class="pj-body">
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1SHkhL3Xb-HjF98oynsxTH5Tj75X1iayk6uwadaAna30/edit" target="_blank">学校出前授業<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1Y7wpcBFwqEKkz9nz5cEBmZtAb_iyTKiD" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/18(月)</span>田万川中 事前学習</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:100%;background:#2a2622"></div></div>
+                  <span class="ev-pct">完了</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/19(火)</span>伊佐中 事前学習</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:100%;background:#2a2622"></div></div>
+                  <span class="ev-pct">完了</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1EX-LVsMVsJI3yc8duKZ2yLZH0dNcTKhnT10Fk6R41sY/edit" target="_blank">学校現地学習<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1nUMWYwv0jV4bEgkY7Nb3zfUs-iztVodp" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/9(土)</span>笠山ジオの会 放課後子ども教室<a href="https://drive.google.com/drive/folders/1iyXgqrN0rgfYLn7_Mu-3fP3m0ssgCmga" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:100%;background:#2a2622"></div></div>
+                  <span class="ev-pct">完了</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/25(月)</span>伊佐中 現地学習<a href="https://drive.google.com/drive/folders/1TxhtrupMv_tYmYv4UbdCiofTXq8FrvOO" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:100%;background:#2a2622"></div></div>
+                  <span class="ev-pct">完了</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/28(木)</span>田万川中 現地学習<a href="https://drive.google.com/drive/folders/1HGKsghSR5RAovuVSSmt0Hv7Zu9_hQT0Q" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:90%;background:#2a2622"></div></div>
+                  <span class="ev-pct">準備完了</span>
+                  <span class="ev-time red">あと2日</span>
+                </div><div class="ev-next">→ 当日対応（5/28 9:20）</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">6/2(火)</span>見島探究</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:50%;background:#c63838"></div></div>
+                  <span class="ev-pct">進行中</span>
+                  <span class="ev-time green">あと7日</span>
+                </div><div class="ev-next">→ 3案の本文（題材・手法・成果物）作成</div>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">6/3(水)</span>野田学園現地学習<a href="https://drive.google.com/drive/folders/1bkwJn1ASu4R_AKqxKTz0ayP45lhwxgED" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:50%;background:#c63838"></div></div>
+                  <span class="ev-pct">進行中</span>
+                  <span class="ev-time green">あと8日</span>
+                </div><div class="ev-next">→ 事前連絡（福本さんへ参加確認・道具持参の連絡）</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1Y7sN_qOOTtI9BSfPjoV9FSCmnaANNo-CqwIRED4mXMc/edit" target="_blank">教員研修<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1YsovfdHC7W70eIofEGGalg7S6Rh68d0v" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">6/9(火)</span>新採教員研修</div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:50%;background:#c63838"></div></div>
+                  <span class="ev-pct">進行中</span>
+                  <span class="ev-time green">あと14日</span>
+                </div><div class="ev-next">→ 笠山ジオの会に13:00先行対応を相談</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">共感</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1dChgg-GzqsBduqRriu7UKm2E-P6NsFgPzSFhYZYeuyU/edit" target="_blank">講演<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1NKkEQZfjeSsbWlki8w57VvnVCL-U-LI9" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/26(火)</span>坪屋さん 菊ヶ浜打合せ<a href="https://drive.google.com/drive/folders/1VgU2CvWxuOkGyou0JtjtM8ywi4SCM-sn" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:25%;background:#a59f95"></div></div>
+                  <span class="ev-pct">準備中</span>
+                  <span class="ev-time red">今日</span>
+                </div><div class="ev-next">→ 打合せ当日（話を聞く）</div>
+              </div>
+            </div>
+
+            <div class="prog-row">
+              <div class="prog-head">
+                <span class="prog-pillar">出会い</span>
+                <span class="prog-name"><a href="https://docs.google.com/document/d/1M3orWY16VwbHST1vBzPPE90Lx_tFIxpihZvMwl9ig2Y/edit" target="_blank">イベント出展<svg class="drive-icon" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 00-1.2 4.5h27.5z" fill="#00ac47"/><path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 11.5z" fill="#ea4335"/><path d="M43.65 25l13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="M59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></a><a href="https://drive.google.com/drive/folders/1GbzDaSnDGdDslYctRiZzE5J7kueaL-ik" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></span>
+                <span class="prog-status">進行中</span>
+              </div>
+              <div class="ev-row">
+                <div class="ev-name"><span class="ev-date">5/4(月)</span>森フェス出展<a href="https://drive.google.com/drive/folders/1Ghh7i8lN0-eAmMjLYvGBIsMSrABbm2Sg" target="_blank" title="フォルダを開く"><svg class="folder-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/></svg></a></div>
+                <div class="ev-bar-wrap">
+                  <div class="ev-bar"><div class="ev-bar-fill" style="width:75%;background:#c63838"></div></div>
+                  <span class="ev-pct">6/8</span>
+                  <span class="ev-time done">完了</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  
-
-  <!-- 業務負荷 -->
-  <div class="card ops-card ok span3">
-    <div class="ctitle">📋 白井さんの業務負荷（白井さんタスク 0件）</div>
-    <div class="ops-ok-msg">✅ 問題なし（過負荷・衝突なし）</div>
-    <div class="ops-week">
-      <div class="ops-week-col">
-        <div class="ops-week-title">今週のタスク</div>
-        <div style="font-size:.8rem;color:#a0aec0;padding:4px 0">タスクなし</div>
+  <div class="card span3">
+    <div class="ctitle">次のアクション（deadline順）</div>
+    <div class="action-list">
+      <div class="act-item">
+        <span class="act-badge today">11日超過</span>
+        <div>
+          <div>楮原先生から受講生の日程確認結果を受ける</div>
+          <div class="act-proj">こども地球の学校 打合せ　萩ジオユニバース</div>
+        </div>
       </div>
-      <div class="ops-week-col">
-        <div class="ops-week-title">来週のタスク</div>
-        <div style="font-size:.8rem;color:#a0aec0;padding:4px 0">タスクなし</div>
+      <div class="act-item">
+        <span class="act-badge today">今日</span>
+        <div>
+          <div>打合せ当日（話を聞く）</div>
+          <div class="act-proj">坪屋さん 菊ヶ浜打合せ　依頼対応</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge urgent">あと2日</span>
+        <div>
+          <div>当日対応（5/28 9:20）</div>
+          <div class="act-proj">田万川中 現地学習　依頼対応</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge urgent">あと2日</span>
+        <div>
+          <div>3案の本文（題材・手法・成果物）作成</div>
+          <div class="act-proj">見島探究　依頼対応</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge soon">あと5日</span>
+        <div>
+          <div>弥富チームと打合せ（設計・役割分担・日程確定）</div>
+          <div class="act-proj">鈴野川ホタルプレラボ　フィールドラボ</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge soon">あと5日</span>
+        <div>
+          <div>事前連絡（福本さんへ参加確認・道具持参の連絡）</div>
+          <div class="act-proj">野田学園現地学習　依頼対応, 磯の健康</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと9日</span>
+        <div>
+          <div>笠山ジオの会に13:00先行対応を相談</div>
+          <div class="act-proj">新採教員研修　依頼対応</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと11日</span>
+        <div>
+          <div>川岸さんスタッフ出欠確認（6/6例会まで）</div>
+          <div class="act-proj">菊ヶ浜トワイライト砂浜ラボ　フィールドラボ</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと13日</span>
+        <div>
+          <div>6/8現地下見で会場確定</div>
+          <div class="act-proj">笠山ゴツゴツ溶岩ラボ　フィールドラボ</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと13日</span>
+        <div>
+          <div>参加者募集・告知（チラシ・SNS）</div>
+          <div class="act-proj">笠山ヒヤシショートツアー　笠山風穴</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと50日</span>
+        <div>
+          <div>ライト参加モデル＋ステップアップの仕組みを設計→上原さんへ提案</div>
+          <div class="act-proj">JA女性部 叩き染め体験　川上藍</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと158日</span>
+        <div>
+          <div>12月日程の確定</div>
+          <div class="act-proj">オープンラボ冬　笠山風穴, フィールドラボ</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">あと250日</span>
+        <div>
+          <div>会場・日程の確定</div>
+          <div class="act-proj">ラボ成果発表会　笠山風穴, フィールドラボ</div>
+        </div>
+      </div>
+      <div class="act-item">
+        <span class="act-badge future">期限未定</span>
+        <div>
+          <div>加工場の使用許可を確認・取得</div>
+          <div class="act-proj">オープンラボ夏　笠山風穴, フィールドラボ</div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- 今日のタスク -->
-  <div class="card">
-    <div class="ctitle">今日のタスク</div>
-    <p class="empty">今日のタスクなし</p>
-  </div>
-
-  <!-- 締切 -->
-  <div class="card">
-    <div class="ctitle">締切・期限</div>
-    <p class="empty">期限付きタスクなし</p>
-  </div>
-
-  <!-- 直近の予定（カレンダー）-->
-  <div class="card span3">
-    <div class="ctitle">直近60日の予定（Googleカレンダー・カテゴリ別）</div>
-    <div class="cal-groups-grid">
-            <div class="cal-group">
-              <div class="cal-group-header" style="border-left-color:#38a169">
-                <span class="cg-dot" style="background:#38a169"></span>学校対応
-                <span class="cg-count">10件</span>
-              </div>
-              <div class="cal-ev">
-                  <span class="ev-date">5/25(月) 09:30</span>
-                  <span class="ev-title">伊佐中1年生（笠山）</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">5/25(月) 13:00</span>
-                  <span class="ev-title">伊佐中1年生（須佐）</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">5/28(木) 09:30</span>
-                  <span class="ev-title">田万川中学校１年生</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/2(火) 10:35</span>
-                  <span class="ev-title">見島中・総合的な探求（オンライン）</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/3(水) 終日</span>
-                  <span class="ev-title">野田学園・福本さんの補助</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/5(金) 08:30</span>
-                  <span class="ev-title">明倫小4年・海岸漂着物</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/9(火) 10:00</span>
-                  <span class="ev-title">萩光塩高３・地学基礎</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/11(木) 13:00</span>
-                  <span class="ev-title">（仮）白水小5-6年・総合</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/23(火) 10:00</span>
-                  <span class="ev-title">萩光塩高３・地学基礎</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">7/14(火) 11:40</span>
-                  <span class="ev-title">大島小中・キャリア教育（白井）</span>
-                </div>
-            </div>
-            <div class="cal-group">
-              <div class="cal-group-header" style="border-left-color:#3182ce">
-                <span class="cg-dot" style="background:#3182ce"></span>依頼・講演
-                <span class="cg-count">2件</span>
-              </div>
-              <div class="cal-ev">
-                  <span class="ev-date">6/16(火) 終日</span>
-                  <span class="ev-title">だいだい研修</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/20(土) 終日</span>
-                  <span class="ev-title">萩学講座（白井）</span>
-                </div>
-            </div>
-            <div class="cal-group">
-              <div class="cal-group-header" style="border-left-color:#d69e2e">
-                <span class="cg-dot" style="background:#d69e2e"></span>イベント・出展
-                <span class="cg-count">1件</span>
-              </div>
-              <div class="cal-ev">
-                  <span class="ev-date">7/20(月) 08:30</span>
-                  <span class="ev-title">笠山ゴツゴツ溶岩ラボ</span>
-                </div>
-            </div>
-            <div class="cal-group">
-              <div class="cal-group-header" style="border-left-color:#718096">
-                <span class="cg-dot" style="background:#718096"></span>会議・打合せ
-                <span class="cg-count">5件</span>
-              </div>
-              <div class="cal-ev">
-                  <span class="ev-date">5/26(火) 16:30</span>
-                  <span class="ev-title">坪屋さん・菊ヶ浜の環境について</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">5/28(木) 13:00</span>
-                  <span class="ev-title">株式会社ラストリー・才野さん</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/8(月) 09:00</span>
-                  <span class="ev-title">笠山ジオの会</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/9(火) 09:30</span>
-                  <span class="ev-title">編集会議</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/9(火) 13:00</span>
-                  <span class="ev-title">新採教員研修</span>
-                </div>
-            </div>
-            <div class="cal-group">
-              <div class="cal-group-header" style="border-left-color:#a0aec0">
-                <span class="cg-dot" style="background:#a0aec0"></span>その他
-                <span class="cg-count">6件</span>
-              </div>
-              <div class="cal-ev">
-                  <span class="ev-date">6/2(火) 13:30</span>
-                  <span class="ev-title">フィールドラボ・弥富</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/10(水) 09:15</span>
-                  <span class="ev-title">長門峡スケッチ</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/10(水) 13:30</span>
-                  <span class="ev-title">フィールドラボ・弥富（予備）</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/14(日) 10:00</span>
-                  <span class="ev-title">風穴ツアー</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/19(金) 終日</span>
-                  <span class="ev-title">遠谷テラ？</span>
-                </div><div class="cal-ev">
-                  <span class="ev-date">6/26(金) 15:00</span>
-                  <span class="ev-title">活動交流会？</span>
-                </div>
-            </div></div>
-  </div>
-
-  <!-- プロジェクト -->
-  <div class="card span2">
-    <div class="ctitle">進行中プロジェクト</div>
-    <p class="empty">プロジェクトなし</p>
-  </div>
-
-  <!-- イベント・講演（MD管理分）-->
-  <div class="card span3">
-    <div class="ctitle">イベント・講演 準備状況（cases/commissioned/フォルダ）</div>
-    <p class="empty">直近のイベントなし</p>
   </div>
 
 </div>
-<footer>萩ジオパーク 業務ポータル ／ 起動: python scripts/dashboard_server.py → http://localhost:8765</footer>
+<footer>萩ジオパーク 業務ポータル ／ 2026-05-26 10:18</footer>
 </body>
 </html>
